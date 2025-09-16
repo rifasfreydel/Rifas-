@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  compras   Compra[]
+}
+
+model Compra {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  correo     String
+  telefono   String
+  cantidad   Int
+  total      Int
+  comprobante String?
+  aprobado   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  tickets    Ticket[]
+}
+
+model Ticket {
+  id       Int    @id @default(autoincrement())
+  numero   Int    @unique
+  compraId Int?
+  compra   Compra? @relation(fields: [compraId], references: [id])
+  ocupado  Boolean @default(false)
+}
+
+model Config {
+  id           Int @id @default(1)
+  precio       Int @default(15)
+  minimo       Int @default(2)
+  totalTickets Int @default(10000)
+}
